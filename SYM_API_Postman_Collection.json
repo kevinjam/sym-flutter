@@ -1,0 +1,820 @@
+{
+  "info": {
+    "name": "SYM Medication Management API",
+    "description": "Backend API for SYM Medication Management App - A comprehensive medication tracking and management system for patients and doctors.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:9000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "medication_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "symptom_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            }
+          }
+        },
+        {
+          "name": "CORS Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/cors-test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cors-test"]
+            }
+          }
+        },
+        {
+          "name": "Test Routes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/test-routes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "test-routes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patient@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"role\": \"patient\",\n  \"phoneNumber\": \"+1234567890\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"gender\": \"male\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.token);",
+                  "    pm.collectionVariables.set('user_id', response.user._id);",
+                  "    console.log('Patient registered and token saved');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register Doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"doctor@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Dr. Jane\",\n  \"lastName\": \"Smith\",\n  \"role\": \"doctor\",\n  \"phoneNumber\": \"+1234567891\",\n  \"specialization\": \"Cardiology\",\n  \"licenseNumber\": \"MD123456\",\n  \"hospital\": \"City General Hospital\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.token);",
+                  "    pm.collectionVariables.set('user_id', response.user._id);",
+                  "    console.log('Doctor registered and token saved');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"patient@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', response.token);",
+                  "    pm.collectionVariables.set('user_id', response.user._id);",
+                  "    console.log('Login successful and token saved');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Updated John\",\n  \"phoneNumber\": \"+1234567899\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcmToken\": \"expo-push-token-example\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/fcm-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "fcm-token"]
+            }
+          }
+        },
+        {
+          "name": "Remove FCM Token",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/fcm-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "fcm-token"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient Endpoints",
+      "item": [
+        {
+          "name": "Get Patient Medications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/medications",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "medications"]
+            }
+          }
+        },
+        {
+          "name": "Take Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/medications/{{medication_id}}/take",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "medications", "{{medication_id}}", "take"]
+            }
+          }
+        },
+        {
+          "name": "Miss Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/medications/{{medication_id}}/miss",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "medications", "{{medication_id}}", "miss"]
+            }
+          }
+        },
+        {
+          "name": "Report Symptom",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Headache\",\n  \"description\": \"Severe headache in the morning\",\n  \"severity\": \"moderate\",\n  \"category\": \"neurological\",\n  \"duration\": \"hours\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/patient/symptoms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "symptoms"]
+            }
+          }
+        },
+        {
+          "name": "Get Patient Symptoms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/symptoms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "symptoms"]
+            }
+          }
+        },
+        {
+          "name": "Get Patient Adherence",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/adherence",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "adherence"]
+            }
+          }
+        },
+        {
+          "name": "Get Patient Schedule",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/patient/schedule",
+              "host": ["{{base_url}}"],
+              "path": ["api", "patient", "schedule"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor Endpoints",
+      "item": [
+        {
+          "name": "Get Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/doctor/patients",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "patients"]
+            }
+          }
+        },
+        {
+          "name": "Get Patient Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/doctor/patients/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "patients", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Prescribe Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": \"{{user_id}}\",\n  \"medicationId\": \"{{medication_id}}\",\n  \"dosage\": {\n    \"amount\": 1,\n    \"unit\": \"tablet\",\n    \"frequency\": \"twice daily\",\n    \"instructions\": \"Take with food\"\n  },\n  \"schedule\": [\n    {\n      \"time\": \"09:00\",\n      \"isActive\": true\n    },\n    {\n      \"time\": \"21:00\",\n      \"isActive\": true\n    }\n  ],\n  \"priority\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/doctor/medications/prescribe",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "medications", "prescribe"]
+            }
+          }
+        },
+        {
+          "name": "Stop Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Patient reported side effects\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/doctor/medications/{{medication_id}}/stop",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "medications", "{{medication_id}}", "stop"]
+            }
+          }
+        },
+        {
+          "name": "Get Doctor Symptoms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/doctor/symptoms",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "symptoms"]
+            }
+          }
+        },
+        {
+          "name": "Resolve Symptom",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Symptom resolved with rest and hydration\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/doctor/symptoms/{{symptom_id}}/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "symptoms", "{{symptom_id}}", "resolve"]
+            }
+          }
+        },
+        {
+          "name": "Get Patient Adherence",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/doctor/adherence/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "doctor", "adherence", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medication Endpoints",
+      "item": [
+        {
+          "name": "Get Medications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/medication",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication"]
+            }
+          }
+        },
+        {
+          "name": "Get Medication Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/medication/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Medication Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/medication/{{medication_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication", "{{medication_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Medication",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aspirin\",\n  \"genericName\": \"Acetylsalicylic acid\",\n  \"category\": \"Pain Management\",\n  \"description\": \"Common pain reliever and blood thinner\",\n  \"dosageForm\": \"tablet\",\n  \"strength\": \"100mg\",\n  \"manufacturer\": \"Generic Pharmaceuticals\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/medication",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication"]
+            }
+          }
+        },
+        {
+          "name": "Update Medication",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description for aspirin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/medication/{{medication_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication", "{{medication_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Approve Medication",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isApproved\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/medication/{{medication_id}}/approve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication", "{{medication_id}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Delete Medication",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/medication/{{medication_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "medication", "{{medication_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notification Endpoints",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notification",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notification"]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notification/{{symptom_id}}/read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notification", "{{symptom_id}}", "read"]
+            }
+          }
+        },
+        {
+          "name": "Mark All Notifications as Read",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notification/read-all",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notification", "read-all"]
+            }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notification/unread-count",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notification", "unread-count"]
+            }
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notification/{{symptom_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "notification", "{{symptom_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

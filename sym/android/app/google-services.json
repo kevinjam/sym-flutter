@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "705925983244",
+    "project_id": "sym-app-8ec30",
+    "storage_bucket": "sym-app-8ec30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705925983244:android:764278e235f586a4ce5229",
+        "android_client_info": {
+          "package_name": "com.thinkdevs.sym"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsaAigKRhauKjEk02jzZ09xyrVA8sMGsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
