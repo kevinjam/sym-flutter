@@ -56,6 +56,7 @@ class PatientSymptomRepositoryImpl implements PatientSymptomRepository {
         requestJson.removeWhere((key, value) => value == null);
         print('🔍 [SYMPTOM] Sending request: $requestJson');
         print('🔍 [SYMPTOM] Request URL: /api/patient/symptoms');
+        print('🔍 [SYMPTOM] PatientMedicationId: ${requestJson['patientMedicationId']}');
 
         final response = await _apiService.reportSymptom(requestJson);
 

@@ -1,8 +1,8 @@
 class AppConstants {
   // API Configuration
   // For iOS Simulator, use your machine's IP address
-  static const String baseUrl = 'http://192.168.1.7:9000'; // Your machine's IP for iOS Simulator
-  // static const String baseUrl = 'http://localhost:9000'; // Local development
+  // static const String baseUrl = 'http://192.168.1.6:9000'; // Your machine's IP for iOS Simulator
+  static const String baseUrl = 'http://localhost:9000'; // Local development
   // static const String baseUrl = 'http://10.0.2.2:9000'; // Android Emulator
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

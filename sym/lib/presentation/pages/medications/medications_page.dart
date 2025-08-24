@@ -6,6 +6,7 @@ import '../../../core/widgets/custom_card.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../providers/medication_provider.dart';
 import 'add_medication_modal.dart';
+import 'package:intl/intl.dart';
 
 class MedicationsPage extends ConsumerWidget {
   const MedicationsPage({super.key});
@@ -14,38 +15,69 @@ class MedicationsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final medicationState = ref.watch(medicationProvider);
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF0A0A0A) : AppColors.background,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: isDark ? const Color(0xFF0A0A0A) : AppColors.background,
+        surfaceTintColor: Colors.transparent,
         title: Text(
           'Medications',
-          style: AppTypography.appBarTitle,
+          style: AppTypography.appBarTitle.copyWith(
+            color: isDark ? Colors.white : AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // TODO: Implement search
-            },
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1A1A1A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.search_rounded,
+                color: isDark ? Colors.white70 : AppColors.textSecondary,
+              ),
+              onPressed: () {
+                // TODO: Implement search
+              },
+            ),
           ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              switch (value) {
-                case 'all':
-                  ref.read(medicationProvider.notifier).loadMedications();
-                  break;
-                case 'active':
-                  ref.read(medicationProvider.notifier).loadMedications(status: 'active');
-                  break;
-                case 'paused':
-                  ref.read(medicationProvider.notifier).loadMedications(status: 'paused');
-                  break;
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'all', child: Text('All Medications')),
-              const PopupMenuItem(value: 'active', child: Text('Active Only')),
-              const PopupMenuItem(value: 'paused', child: Text('Paused Only')),
-            ],
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1A1A1A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: PopupMenuButton<String>(
+              icon: Icon(
+                Icons.filter_list_rounded,
+                color: isDark ? Colors.white70 : AppColors.textSecondary,
+              ),
+              onSelected: (value) {
+                switch (value) {
+                  case 'all':
+                    ref.read(medicationProvider.notifier).loadMedications();
+                    break;
+                  case 'active':
+                    ref.read(medicationProvider.notifier).loadMedications(status: 'active');
+                    break;
+                  case 'paused':
+                    ref.read(medicationProvider.notifier).loadMedications(status: 'paused');
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(value: 'all', child: Text('All Medications')),
+                const PopupMenuItem(value: 'active', child: Text('Active Only')),
+                const PopupMenuItem(value: 'paused', child: Text('Paused Only')),
+              ],
+            ),
           ),
         ],
       ),
@@ -57,290 +89,522 @@ class MedicationsPage extends ConsumerWidget {
                 ? _buildEmptyState()
                 : _buildMedicationsList(medicationState.medications, ref),
       ),
-      floatingActionButton: CustomFloatingActionButton(
-        icon: Icons.add,
-        tooltip: 'Add Medication',
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const AddMedicationModal(),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: CustomCard(
-        margin: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.medicationPrimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Icon(
-                Icons.medication_outlined,
-                size: 64,
-                color: AppColors.medicationPrimary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'No medications yet',
-              style: AppTypography.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start tracking your medications to stay on top of your health',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            CustomButton(
-              text: 'Add Your First Medication',
-              icon: Icons.add_circle_outline,
-              onPressed: () {
-                // Navigate to add medication
-              },
-              type: ButtonType.primary,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [
+              AppColors.medicationPrimary,
+              AppColors.medicationPrimary.withOpacity(0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.medicationPrimary.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
+        ),
+        child: FloatingActionButton.extended(
+          heroTag: "medications_fab",
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AddMedicationModal(),
+              ),
+            );
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          label: const Text(
+            'Add Medication',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMedicationsList(List<dynamic> medications, WidgetRef ref) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: medications.length,
-      itemBuilder: (context, index) {
-        final medication = medications[index];
-        return _buildMedicationCard(medication, ref);
+  Widget _buildEmptyState() {
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+        
+        return Center(
+          child: Container(
+            margin: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]!,
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.medicationPrimary.withOpacity(0.1),
+                        AppColors.medicationPrimary.withOpacity(0.05),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(
+                    Icons.medication_liquid_rounded,
+                    size: 64,
+                    color: AppColors.medicationPrimary,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'No medications yet',
+                  style: AppTypography.headlineSmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Start tracking your medications to stay on top of your health journey',
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: isDark ? Colors.white60 : AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.medicationPrimary,
+                        AppColors.medicationPrimary.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AddMedicationModal(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+                    label: const Text(
+                      'Add Your First Medication',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
 
-  Widget _buildMedicationCard(dynamic medication, WidgetRef ref) {
+  Widget _buildMedicationsList(List<dynamic> medications, WidgetRef ref) {
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+        
+        return ListView.separated(
+          padding: const EdgeInsets.all(20),
+          itemCount: medications.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final medication = medications[index];
+            return _buildMedicationCard(context, medication, ref, isDark);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMedicationCard(BuildContext context, dynamic medication, WidgetRef ref, bool isDark) {
     final statusColor = _getStatusColor(medication.status);
     final isActive = medication.status == 'active';
     final nextDose = _getNextDoseTime(medication.scheduleTimes);
     
-    return Builder(
-      builder: (context) => MedicationCard(
-      isActive: isActive,
-      accentColor: statusColor,
-      onTap: () {
-        // Navigate to medication details
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with medication name and status
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      medication.name,
-                      style: AppTypography.titleLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            medication.status?.toUpperCase() ?? 'UNKNOWN',
-                            style: AppTypography.labelSmall.copyWith(
-                              color: statusColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          medication.dosage,
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuButton<String>(
-                onSelected: (value) {
-                  switch (value) {
-                    case 'edit':
-                      // TODO: Navigate to edit medication
-                      break;
-                    case 'take':
-                      ref.read(medicationProvider.notifier).markMedicationTaken(medication.id);
-                      break;
-                    case 'delete':
-                      _showDeleteDialog(context, ref, medication.id, medication.name);
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit_outlined, size: 20),
-                        SizedBox(width: 8),
-                        Text('Edit'),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 'take',
-                    child: Row(
-                      children: [
-                        Icon(Icons.check_circle_outline, size: 20),
-                        SizedBox(width: 8),
-                        Text('Mark as Taken'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete_outline, size: 20, color: AppColors.error),
-                        const SizedBox(width: 8),
-                        Text('Delete', style: TextStyle(color: AppColors.error)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Schedule information
-          if (medication.scheduleTimes.isNotEmpty) ...[
-            Row(
-              children: [
-                Icon(
-                  Icons.schedule,
-                  size: 16,
-                  color: AppColors.textSecondary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Schedule: ${medication.scheduleTimes.join(', ')}',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-          ],
-          
-          // Next dose time
-          if (nextDose != null) ...[
-            Row(
-              children: [
-                Icon(
-                  Icons.alarm,
-                  size: 16,
-                  color: AppColors.warning,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Next dose: $nextDose',
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.warning,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-          ],
-          
-          // Linked symptoms
-          if (medication.linkedSymptoms.isNotEmpty) ...[
-            Row(
-              children: [
-                Icon(
-                  Icons.link,
-                  size: 16,
-                  color: AppColors.textSecondary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Linked to ${medication.linkedSymptoms.length} symptom${medication.linkedSymptoms.length == 1 ? '' : 's'}',
-                  style: AppTypography.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-          ] else
-            const SizedBox(height: 8),
-          
-          // Action buttons
-          Row(
-            children: [
-              if (isActive) ...[
-                Expanded(
-                  child: CustomButton(
-                    text: 'Take Now',
-                    icon: Icons.check_circle_outline,
-                    onPressed: () {
-                      _showTakeMedicationDialog(context, ref, medication);
-                    },
-                    type: ButtonType.primary,
-                    size: ButtonSize.small,
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: CustomButton(
-                  text: 'View Details',
-                  icon: Icons.info_outline,
-                  onPressed: () {
-                    _showMedicationDetails(context, medication);
-                  },
-                  type: ButtonType.secondary,
-                  size: ButtonSize.small,
-                ),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]!,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black.withOpacity(0.3) : Colors.grey.withOpacity(0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showMedicationDetails(context, medication),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with medication icon, name and menu
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            statusColor.withOpacity(0.2),
+                            statusColor.withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        _getMedicationIcon(medication.dosageForm),
+                        color: statusColor,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            medication.name,
+                            style: AppTypography.titleLarge.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            medication.dosage,
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: isDark ? Colors.white60 : AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: statusColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        medication.status?.toUpperCase() ?? 'ACTIVE',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: statusColor,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // Schedule and next dose info
+                if (medication.scheduleTimes.isNotEmpty || nextDose != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF0F0F0F) : Colors.grey[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200]!,
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        if (medication.scheduleTimes.isNotEmpty) ...[
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.info.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.schedule_rounded,
+                                  size: 16,
+                                  color: AppColors.info,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Schedule',
+                                      style: AppTypography.labelMedium.copyWith(
+                                        color: isDark ? Colors.white70 : AppColors.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      medication.scheduleTimes.join(' • '),
+                                      style: AppTypography.bodyMedium.copyWith(
+                                        color: isDark ? Colors.white : AppColors.textPrimary,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                        
+                        if (medication.scheduleTimes.isNotEmpty && nextDose != null)
+                          const SizedBox(height: 12),
+                        
+                        if (nextDose != null) ...[
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.warning.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.alarm_rounded,
+                                  size: 16,
+                                  color: AppColors.warning,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Next Dose',
+                                      style: AppTypography.labelMedium.copyWith(
+                                        color: isDark ? Colors.white70 : AppColors.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      nextDose,
+                                      style: AppTypography.bodyMedium.copyWith(
+                                        color: AppColors.warning,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                
+                // Linked symptoms
+                if (medication.linkedSymptoms.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Icon(
+                          Icons.link_rounded,
+                          size: 14,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Linked to ${medication.linkedSymptoms.length} symptom${medication.linkedSymptoms.length == 1 ? '' : 's'}',
+                        style: AppTypography.bodySmall.copyWith(
+                          color: isDark ? Colors.white60 : AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                
+                // Action buttons
+                Row(
+                  children: [
+                    if (isActive) ...[
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.success,
+                                AppColors.success.withOpacity(0.8),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.success.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Builder(
+                            builder: (context) => ElevatedButton.icon(
+                              onPressed: () => _showTakeMedicationDialog(context, ref, medication),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              icon: const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                              label: const Text(
+                                'Take Now',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Builder(
+                          builder: (context) => ElevatedButton.icon(
+                            onPressed: () => _showMedicationDetails(context, medication),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            icon: Icon(
+                              Icons.info_outline_rounded,
+                              color: isDark ? Colors.white70 : AppColors.textSecondary,
+                              size: 18,
+                            ),
+                            label: Text(
+                              'Details',
+                              style: TextStyle(
+                                color: isDark ? Colors.white70 : AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  IconData _getMedicationIcon(String? dosageForm) {
+    switch (dosageForm?.toLowerCase()) {
+      case 'tablet':
+      case 'pill':
+        return Icons.medication_rounded;
+      case 'capsule':
+        return Icons.medication_liquid_rounded;
+      case 'liquid':
+      case 'syrup':
+        return Icons.local_drink_rounded;
+      case 'injection':
+      case 'syringe':
+        return Icons.vaccines_rounded;
+      case 'inhaler':
+        return Icons.air_rounded;
+      case 'cream':
+      case 'ointment':
+        return Icons.healing_rounded;
+      case 'drops':
+        return Icons.water_drop_rounded;
+      default:
+        return Icons.medication_rounded;
+    }
   }
 
   String? _getNextDoseTime(List<String> scheduleTimes) {
@@ -402,87 +666,162 @@ class MedicationsPage extends ConsumerWidget {
   }
 
   void _showTakeMedicationDialog(BuildContext context, WidgetRef ref, dynamic medication) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.success.withOpacity(0.2),
+                    AppColors.success.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.medication,
+                Icons.medication_rounded,
                 color: AppColors.success,
                 size: 24,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 'Take Medication',
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
                 ),
               ),
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mark "${medication.name}" as taken?',
-              style: AppTypography.bodyLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Dosage: ${medication.dosage}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+        content: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F0F0F) : Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Mark "${medication.name}" as taken?',
+                style: AppTypography.bodyLarge.copyWith(
+                  color: isDark ? Colors.white : AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Time: ${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(
+                    Icons.medication_rounded,
+                    size: 16,
+                    color: isDark ? Colors.white60 : AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Dosage: ${medication.dosage}',
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: isDark ? Colors.white60 : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 16,
+                    color: isDark ? Colors.white60 : AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Time: ${DateFormat('HH:mm').format(DateTime.now())}',
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: isDark ? Colors.white60 : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             child: Text(
               'Cancel',
               style: AppTypography.labelLarge.copyWith(
-                color: AppColors.textSecondary,
+                color: isDark ? Colors.white60 : AppColors.textSecondary,
               ),
             ),
           ),
-          CustomButton(
-            text: 'Mark as Taken',
-            icon: Icons.check_circle,
-            onPressed: () {
-              ref.read(medicationProvider.notifier).markMedicationTaken(medication.id);
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${medication.name} marked as taken'),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.success,
+                  AppColors.success.withOpacity(0.8),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ref.read(medicationProvider.notifier).markMedicationTaken(medication.id);
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.check_circle_rounded, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Text('${medication.name} marked as taken'),
+                      ],
+                    ),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            type: ButtonType.primary,
-            size: ButtonSize.small,
+              ),
+              icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
+              label: const Text(
+                'Mark as Taken',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -490,41 +829,52 @@ class MedicationsPage extends ConsumerWidget {
   }
 
   void _showMedicationDetails(BuildContext context, dynamic medication) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.medicationPrimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.medicationPrimary.withOpacity(0.2),
+                    AppColors.medicationPrimary.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.medication,
+                _getMedicationIcon(medication.dosageForm),
                 color: AppColors.medicationPrimary,
                 size: 24,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 medication.name,
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
                 ),
               ),
             ),
           ],
         ),
         content: Container(
+          constraints: const BoxConstraints(maxHeight: 400),
           decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(8),
+            color: isDark ? const Color(0xFF0F0F0F) : Colors.grey[50],
+            borderRadius: BorderRadius.circular(12),
           ),
           child: SingleChildScrollView(
             child: Padding(
@@ -533,63 +883,85 @@ class MedicationsPage extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDetailRow('Dosage', medication.dosage),
-                  _buildDetailRow('Status', medication.status?.toUpperCase() ?? 'ACTIVE'),
+                  _buildDetailRow('Dosage', medication.dosage, isDark),
+                  _buildDetailRow('Status', medication.status?.toUpperCase() ?? 'ACTIVE', isDark),
                   if (medication.scheduleTimes.isNotEmpty)
-                    _buildDetailRow('Schedule', medication.scheduleTimes.join(', ')),
+                    _buildDetailRow('Schedule', medication.scheduleTimes.join(' • '), isDark),
                   if (medication.linkedSymptoms.isNotEmpty)
-                    _buildDetailRow('Linked Symptoms', '${medication.linkedSymptoms.length} symptom${medication.linkedSymptoms.length == 1 ? '' : 's'}'),
+                    _buildDetailRow('Linked Symptoms', '${medication.linkedSymptoms.length} symptom${medication.linkedSymptoms.length == 1 ? '' : 's'}', isDark),
                   if (medication.description != null && medication.description!.isNotEmpty)
-                    _buildDetailRow('Description', medication.description!),
+                    _buildDetailRow('Description', medication.description!, isDark),
                   if (medication.category != null && medication.category!.isNotEmpty)
-                    _buildDetailRow('Category', medication.category!),
+                    _buildDetailRow('Category', medication.category!, isDark),
                   if (medication.dosageForm != null && medication.dosageForm!.isNotEmpty)
-                    _buildDetailRow('Dosage Form', medication.dosageForm!),
+                    _buildDetailRow('Dosage Form', medication.dosageForm!, isDark),
                   if (medication.priority != null && medication.priority!.isNotEmpty)
-                    _buildDetailRow('Priority', medication.priority!.toUpperCase()),
+                    _buildDetailRow('Priority', medication.priority!.toUpperCase(), isDark),
                   if (medication.startDate != null)
-                    _buildDetailRow('Start Date', '${medication.startDate!.day}/${medication.startDate!.month}/${medication.startDate!.year}'),
+                    _buildDetailRow('Start Date', DateFormat('MMM dd, yyyy').format(medication.startDate!), isDark),
                   if (medication.endDate != null)
-                    _buildDetailRow('End Date', '${medication.endDate!.day}/${medication.endDate!.month}/${medication.endDate!.year}'),
+                    _buildDetailRow('End Date', DateFormat('MMM dd, yyyy').format(medication.endDate!), isDark),
                   if (medication.lastTaken != null)
-                    _buildDetailRow('Last Taken', '${medication.lastTaken!.day}/${medication.lastTaken!.month}/${medication.lastTaken!.year} at ${medication.lastTaken!.hour.toString().padLeft(2, '0')}:${medication.lastTaken!.minute.toString().padLeft(2, '0')}'),
+                    _buildDetailRow('Last Taken', DateFormat('MMM dd, yyyy at HH:mm').format(medication.lastTaken!), isDark),
                   if (medication.totalDoses != null && medication.takenDoses != null)
-                    _buildDetailRow('Progress', '${medication.takenDoses}/${medication.totalDoses} doses taken'),
+                    _buildDetailRow('Progress', '${medication.takenDoses}/${medication.totalDoses} doses taken', isDark),
                 ],
               ),
             ),
           ),
         ),
         actions: [
-          CustomButton(
-            text: 'Close',
-            onPressed: () => Navigator.of(context).pop(),
-            type: ButtonType.secondary,
-            size: ButtonSize.small,
+          Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: AppTypography.labelMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[600],
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: AppTypography.labelMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white60 : Colors.grey[600],
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: AppTypography.bodyMedium.copyWith(
-              color: Colors.grey[800],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              style: AppTypography.bodyMedium.copyWith(
+                color: isDark ? Colors.white : Colors.grey[800],
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/custom_card.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/providers/notification_providers.dart';
+import '../../providers/medication_provider.dart';
+import '../../providers/patient_symptom_provider.dart';
 import '../medications/medications_page.dart';
 import '../symptoms/symptoms_page.dart';
 import '../doctors/doctors_page.dart';
 import '../profile/profile_page.dart';
 import '../notifications/notifications_page.dart';
+import '../../providers/auth_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -20,6 +24,12 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   int _currentIndex = 0;
+
+  void navigateToTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
   
   final List<Widget> _pages = [
     const DashboardTab(),
@@ -128,11 +138,11 @@ class DashboardTab extends ConsumerWidget {
           ),
         ],
       ),
-      body: _buildDashboard(),
+      body: _buildDashboard(context),
     );
   }
 
-  Widget _buildDashboard() {
+  Widget _buildDashboard(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
         // Refresh data
@@ -152,7 +162,7 @@ class DashboardTab extends ConsumerWidget {
             const SizedBox(height: 24),
             
             // Quick Actions
-            _buildQuickActions(),
+            _buildQuickActions(context),
             const SizedBox(height: 24),
             
             // Recent Activity
@@ -164,67 +174,211 @@ class DashboardTab extends ConsumerWidget {
   }
 
   Widget _buildWelcomeSection() {
-    final now = DateTime.now();
-    final hour = now.hour;
-    String greeting = 'Good morning';
-    if (hour >= 12 && hour < 17) {
-      greeting = 'Good afternoon';
-    } else if (hour >= 17) {
-      greeting = 'Good evening';
-    }
+    return Consumer(
+      builder: (context, ref, child) {
+        final authState = ref.watch(authProvider);
+        final user = authState.user;
+        
+        final now = DateTime.now();
+        final hour = now.hour;
+        String greeting = 'Good morning';
+        if (hour >= 12 && hour < 17) {
+          greeting = 'Good afternoon';
+        } else if (hour >= 17) {
+          greeting = 'Good evening';
+        }
+        
+        final dateFormat = DateFormat('EEEE, MMM d');
+        final formattedDate = dateFormat.format(now);
+        
+        final userName = user?.firstName ?? 'User';
+        final userInitial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
 
-    return CustomCard(
-      backgroundColor: AppColors.primaryContainer,
-      elevation: 3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primary,
+                AppColors.secondary,
+                AppColors.primaryDark,
+              ],
+              stops: [0.0, 0.6, 1.0],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$greeting, $userName! 🚀',
+                          style: AppTypography.headlineMedium.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          formattedDate,
+                          style: AppTypography.bodySmall.copyWith(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Stack(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            userInitial,
+                            style: AppTypography.titleLarge.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 2,
+                        right: 2,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Health Status
+              Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.success.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              "You're doing great!",
+              style: AppTypography.bodyMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Active, Due, Taken stats
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$greeting!',
-                      style: AppTypography.headlineMedium.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'How are you feeling today?',
-                      style: AppTypography.bodyLarge.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+                child: _buildSmallStatCard(
+                  icon: Icons.star,
+                  label: 'Active',
+                  value: '3',
+                  color: AppColors.warning,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildSmallStatCard(
+                  icon: Icons.access_time,
+                  label: 'Due',
+                  value: '2',
+                  color: AppColors.error,
                 ),
-                child: Icon(
-                  Icons.favorite,
-                  color: AppColors.primary,
-                  size: 32,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildSmallStatCard(
+                  icon: Icons.check_circle,
+                  label: 'Taken',
+                  value: '5',
+                  color: AppColors.success,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          CustomButton(
-            text: 'Log How You Feel',
-            icon: Icons.add_circle_outline,
-            onPressed: () {
-              // Navigate to symptoms page
-            },
-            type: ButtonType.secondary,
-            size: ButtonSize.medium,
+        ],
+      ),
+    );
+      },
+    );
+  }
+
+  Widget _buildSmallStatCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: Colors.white,
+            size: 16,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: AppTypography.titleSmall.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            label,
+            style: AppTypography.labelSmall.copyWith(
+              color: Colors.white70,
+            ),
           ),
         ],
       ),
@@ -245,27 +399,49 @@ class DashboardTab extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: StatsCard(
-                title: 'Medications',
-                value: '3',
-                icon: Icons.medication,
-                color: AppColors.medicationPrimary,
-                subtitle: 'Active prescriptions',
-                onTap: () {
-                  // Navigate to medications
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final medicationState = ref.watch(medicationProvider);
+                  final activeMedicationsCount = medicationState.medications
+                      .where((m) => m.status == 'active')
+                      .length;
+                  
+                  return StatsCard(
+                    title: 'Medications',
+                    value: activeMedicationsCount.toString(),
+                    icon: Icons.medication,
+                    color: AppColors.medicationPrimary,
+                    subtitle: 'Active prescriptions',
+                    onTap: () {
+                      // Navigate to medications tab
+                      final homePageState = context.findAncestorStateOfType<_HomePageState>();
+                      homePageState?.navigateToTab(1); // Medications tab index
+                    },
+                  );
                 },
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: StatsCard(
-                title: 'Symptoms',
-                value: '2',
-                icon: Icons.health_and_safety,
-                color: AppColors.secondary,
-                subtitle: 'This week',
-                onTap: () {
-                  // Navigate to symptoms
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final patientSymptomState = ref.watch(patientSymptomProvider);
+                  final activeSymptomsCount = patientSymptomState.symptoms
+                      .where((s) => !s.isResolved)
+                      .length;
+                  
+                  return StatsCard(
+                    title: 'Symptoms',
+                    value: activeSymptomsCount.toString(),
+                    icon: Icons.health_and_safety,
+                    color: AppColors.secondary,
+                    subtitle: 'Active symptoms',
+                    onTap: () {
+                      // Navigate to symptoms tab
+                      final homePageState = context.findAncestorStateOfType<_HomePageState>();
+                      homePageState?.navigateToTab(2); // Symptoms tab index
+                    },
+                  );
                 },
               ),
             ),
@@ -302,7 +478,7 @@ class DashboardTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,7 +502,9 @@ class DashboardTab extends ConsumerWidget {
               Icons.health_and_safety,
               AppColors.secondary,
               () {
-                // Navigate to symptoms
+                // Navigate to symptoms tab
+                final homePageState = context.findAncestorStateOfType<_HomePageState>();
+                homePageState?.navigateToTab(2); // Symptoms tab index
               },
             ),
             _buildQuickActionCard(
@@ -334,7 +512,9 @@ class DashboardTab extends ConsumerWidget {
               Icons.medication,
               AppColors.medicationPrimary,
               () {
-                // Navigate to medications
+                // Navigate to medications tab
+                final homePageState = context.findAncestorStateOfType<_HomePageState>();
+                homePageState?.navigateToTab(1); // Medications tab index
               },
             ),
             _buildQuickActionCard(

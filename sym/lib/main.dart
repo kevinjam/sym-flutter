@@ -10,6 +10,7 @@ import 'services/sync_service.dart';
 import 'presentation/pages/splash_page.dart';
 import 'presentation/pages/auth/login_page.dart';
 import 'presentation/pages/home/home_page.dart';
+import 'presentation/pages/home/dashboard_demo_page.dart';
 import 'presentation/pages/notifications/notifications_page.dart';
 import 'presentation/providers/auth_provider.dart';
 
@@ -41,6 +42,7 @@ class SymApp extends ConsumerWidget {
       themeMode: ThemeMode.system,
       home: const AppRouter(),
       routes: {
+        '/dashboard-demo': (context) => const DashboardDemoPage(),
         '/notifications': (context) => const NotificationsPage(),
         '/medications': (context) => const HomePage(), // Will navigate to medications tab
         '/symptoms': (context) => const HomePage(), // Will navigate to symptoms tab

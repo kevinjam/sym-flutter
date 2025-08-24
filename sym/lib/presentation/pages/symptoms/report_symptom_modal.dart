@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/patient_symptom_provider.dart';
+import '../../providers/medication_provider.dart';
 
 class ReportSymptomModal extends ConsumerStatefulWidget {
   const ReportSymptomModal({super.key});
@@ -16,6 +17,7 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
   String _selectedSeverity = 'moderate';
   String? _selectedCategory;
   String? _selectedDuration;
+  String? _selectedMedicationId;
 
   final List<String> _severityOptions = ['mild', 'moderate', 'severe'];
   final List<String> _categoryOptions = [
@@ -37,6 +39,43 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Load medications when modal opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadMedications();
+    });
+  }
+
+  Future<void> _loadMedications() async {
+    // Load medications from the same provider used in Medications tab
+    await ref.read(medicationProvider.notifier).loadMedications();
+    
+    final medicationState = ref.read(medicationProvider);
+    
+    if (medicationState.medications.isNotEmpty) {
+      setState(() {
+        _availableMedications = medicationState.medications.map((medication) {
+          final medicationName = medication.name;
+          final dosage = medication.dosage;
+          final displayName = '$medicationName ($dosage)';
+          return {
+            'id': medication.id,
+            'name': displayName,
+          };
+        }).toList();
+      });
+    } else {
+      // Fallback to empty list if no medications found
+      setState(() {
+        _availableMedications = [];
+      });
+    }
+  }
+
+  List<Map<String, String>> _availableMedications = [];
+
+  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
@@ -53,6 +92,7 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
         severity: _selectedSeverity,
         category: _selectedCategory,
         duration: _selectedDuration,
+        patientMedicationId: null, // Set to null since we're using regular medication IDs
       );
 
       if (mounted) {
@@ -70,6 +110,17 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
   @override
   Widget build(BuildContext context) {
     final symptomState = ref.watch(patientSymptomProvider);
+    final medicationState = ref.watch(medicationProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Debug: Print medication state
+    print('Medication State - Loading: ${medicationState.isLoading}');
+    print('Medication State - Error: ${medicationState.error}');
+    print('Medication State - Medications count: ${medicationState.medications.length}');
+    if (medicationState.medications.isNotEmpty) {
+      print('First medication: ${medicationState.medications.first.id}');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -112,6 +163,79 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
               ),
               const SizedBox(height: 16),
 
+              // Related Medication dropdown
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Related Medication (Optional)',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.grey[800]!.withOpacity(0.3),
+                            Colors.grey[900]!.withOpacity(0.3),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.grey[600]!.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedMedicationId,
+                          hint: Text(
+                            _availableMedications.isEmpty
+                              ? 'Loading medications...'
+                              : 'Select medication',
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 16,
+                            ),
+                          ),
+                          dropdownColor: Colors.grey[800],
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey[400],
+                          ),
+                          isExpanded: true,
+                          items: _availableMedications.map((medication) {
+                            return DropdownMenuItem<String>(
+                              value: medication['id'],
+                              child: Text(
+                                medication['name']!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedMedicationId = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
               // Description
               TextFormField(
                 controller: _descriptionController,
@@ -126,41 +250,116 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
               const SizedBox(height: 16),
 
               // Severity
-              DropdownButtonFormField<String>(
-                value: _selectedSeverity,
-                decoration: const InputDecoration(
-                  labelText: 'Severity *',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF333333) : Colors.grey.shade300,
+                  ),
                 ),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedSeverity,
+                  decoration: InputDecoration(
+                    labelText: 'Severity *',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    prefixIcon: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.orange.withOpacity(0.8),
+                            Colors.red.withOpacity(0.6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.warning,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  dropdownColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                  ),
                 items: _severityOptions.map((severity) {
                   return DropdownMenuItem(
                     value: severity,
                     child: Text(severity.capitalize()),
                   );
                 }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedSeverity = value;
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select severity';
-                  }
-                  return null;
-                },
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _selectedSeverity = value;
+                      });
+                    }
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select severity';
+                    }
+                    return null;
+                  },
+                ),
               ),
               const SizedBox(height: 16),
 
               // Category
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Category (Optional)',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF333333) : Colors.grey.shade300,
+                  ),
                 ),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  decoration: InputDecoration(
+                    labelText: 'Category (Optional)',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    prefixIcon: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.blue.withOpacity(0.8),
+                            Colors.purple.withOpacity(0.6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.category,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  dropdownColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                  ),
                 items: [
                   const DropdownMenuItem<String>(
                     value: null,
@@ -173,21 +372,59 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
                     );
                   }).toList(),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCategory = value;
-                  });
-                },
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
+                ),
               ),
               const SizedBox(height: 16),
 
               // Duration
-              DropdownButtonFormField<String>(
-                value: _selectedDuration,
-                decoration: const InputDecoration(
-                  labelText: 'Duration (Optional)',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF333333) : Colors.grey.shade300,
+                  ),
                 ),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedDuration,
+                  decoration: InputDecoration(
+                    labelText: 'Duration (Optional)',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey.shade700,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    prefixIcon: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.green.withOpacity(0.8),
+                            Colors.teal.withOpacity(0.6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.schedule,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  dropdownColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                  ),
                 items: [
                   const DropdownMenuItem<String>(
                     value: null,
@@ -200,11 +437,12 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
                     );
                   }).toList(),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    _selectedDuration = value;
-                  });
-                },
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedDuration = value;
+                    });
+                  },
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -226,17 +464,60 @@ class _ReportSymptomModalState extends ConsumerState<ReportSymptomModal> {
               const SizedBox(height: 24),
 
               // Submit Button
-              SizedBox(
-                height: 48,
+              Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.8),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: ElevatedButton(
                   onPressed: symptomState.isLoading ? null : _submitForm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
                   child: symptomState.isLoading
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
                         )
-                      : const Text('Report Symptom'),
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Report Symptom',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
               const SizedBox(height: 16),

@@ -22,49 +22,6 @@ class _PatientMedicationApiService implements PatientMedicationApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<List<PatientMedication>> getPatientMedications({
-    String? status,
-    String? priority,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'status': status,
-      r'priority': priority,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<PatientMedication>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/patient/medications',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<PatientMedication> _value;
-    try {
-      _value = _result.data!
-          .map((dynamic i) =>
-              PatientMedication.fromJson(i as Map<String, dynamic>))
-          .toList();
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<List<Medication>> getMedicationCatalog({
     String? category,
     String? search,

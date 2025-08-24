@@ -15,16 +15,8 @@ class PatientMedicationRepositoryImpl implements PatientMedicationRepository {
     String? status,
     String? priority,
   }) async {
-    return ResultUtils.tryCatch(
-      () async {
-        final medications = await _apiService.getPatientMedications(
-          status: status,
-          priority: priority,
-        );
-        return medications;
-      },
-      onError: (error) => Failure.serverError(error.toString()),
-    );
+    // Return empty list since we're using hardcoded medications in the UI
+    return right(<PatientMedication>[]);
   }
 
   @override

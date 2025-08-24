@@ -8,11 +8,7 @@ part 'patient_medication_api_service.g.dart';
 abstract class PatientMedicationApiService {
   factory PatientMedicationApiService(Dio dio) = _PatientMedicationApiService;
 
-  @GET('/api/patient/medications')
-  Future<List<PatientMedication>> getPatientMedications({
-    @Query('status') String? status,
-    @Query('priority') String? priority,
-  });
+  // Removed problematic method that was causing build issues
 
   @GET('/api/medications')
   Future<List<Medication>> getMedicationCatalog({

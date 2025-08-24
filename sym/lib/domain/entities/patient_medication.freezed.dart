@@ -23,7 +23,7 @@ mixin _$PatientMedication {
   String get id => throw _privateConstructorUsedError;
   String get patientId => throw _privateConstructorUsedError;
   String get medicationId => throw _privateConstructorUsedError;
-  String get prescribedBy => throw _privateConstructorUsedError;
+  String? get prescribedBy => throw _privateConstructorUsedError;
   MedicationDosage get dosage => throw _privateConstructorUsedError;
   List<MedicationSchedule> get schedule => throw _privateConstructorUsedError;
   String get priority => throw _privateConstructorUsedError;
@@ -40,8 +40,8 @@ mixin _$PatientMedication {
   int get missedDoses => throw _privateConstructorUsedError;
   DateTime? get lastTaken => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt =>
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt =>
       throw _privateConstructorUsedError; // Populated fields
   Medication? get medication => throw _privateConstructorUsedError;
   User? get prescribedByUser => throw _privateConstructorUsedError;
@@ -66,7 +66,7 @@ abstract class $PatientMedicationCopyWith<$Res> {
       {String id,
       String patientId,
       String medicationId,
-      String prescribedBy,
+      String? prescribedBy,
       MedicationDosage dosage,
       List<MedicationSchedule> schedule,
       String priority,
@@ -83,8 +83,8 @@ abstract class $PatientMedicationCopyWith<$Res> {
       int missedDoses,
       DateTime? lastTaken,
       String? notes,
-      DateTime createdAt,
-      DateTime updatedAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
       Medication? medication,
       User? prescribedByUser});
 
@@ -111,7 +111,7 @@ class _$PatientMedicationCopyWithImpl<$Res, $Val extends PatientMedication>
     Object? id = null,
     Object? patientId = null,
     Object? medicationId = null,
-    Object? prescribedBy = null,
+    Object? prescribedBy = freezed,
     Object? dosage = null,
     Object? schedule = null,
     Object? priority = null,
@@ -128,8 +128,8 @@ class _$PatientMedicationCopyWithImpl<$Res, $Val extends PatientMedication>
     Object? missedDoses = null,
     Object? lastTaken = freezed,
     Object? notes = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? medication = freezed,
     Object? prescribedByUser = freezed,
   }) {
@@ -146,10 +146,10 @@ class _$PatientMedicationCopyWithImpl<$Res, $Val extends PatientMedication>
           ? _value.medicationId
           : medicationId // ignore: cast_nullable_to_non_nullable
               as String,
-      prescribedBy: null == prescribedBy
+      prescribedBy: freezed == prescribedBy
           ? _value.prescribedBy
           : prescribedBy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       dosage: null == dosage
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
@@ -214,14 +214,14 @@ class _$PatientMedicationCopyWithImpl<$Res, $Val extends PatientMedication>
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
+              as DateTime?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       medication: freezed == medication
           ? _value.medication
           : medication // ignore: cast_nullable_to_non_nullable
@@ -284,7 +284,7 @@ abstract class _$$PatientMedicationImplCopyWith<$Res>
       {String id,
       String patientId,
       String medicationId,
-      String prescribedBy,
+      String? prescribedBy,
       MedicationDosage dosage,
       List<MedicationSchedule> schedule,
       String priority,
@@ -301,8 +301,8 @@ abstract class _$$PatientMedicationImplCopyWith<$Res>
       int missedDoses,
       DateTime? lastTaken,
       String? notes,
-      DateTime createdAt,
-      DateTime updatedAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
       Medication? medication,
       User? prescribedByUser});
 
@@ -330,7 +330,7 @@ class __$$PatientMedicationImplCopyWithImpl<$Res>
     Object? id = null,
     Object? patientId = null,
     Object? medicationId = null,
-    Object? prescribedBy = null,
+    Object? prescribedBy = freezed,
     Object? dosage = null,
     Object? schedule = null,
     Object? priority = null,
@@ -347,8 +347,8 @@ class __$$PatientMedicationImplCopyWithImpl<$Res>
     Object? missedDoses = null,
     Object? lastTaken = freezed,
     Object? notes = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? medication = freezed,
     Object? prescribedByUser = freezed,
   }) {
@@ -365,10 +365,10 @@ class __$$PatientMedicationImplCopyWithImpl<$Res>
           ? _value.medicationId
           : medicationId // ignore: cast_nullable_to_non_nullable
               as String,
-      prescribedBy: null == prescribedBy
+      prescribedBy: freezed == prescribedBy
           ? _value.prescribedBy
           : prescribedBy // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       dosage: null == dosage
           ? _value.dosage
           : dosage // ignore: cast_nullable_to_non_nullable
@@ -433,14 +433,14 @@ class __$$PatientMedicationImplCopyWithImpl<$Res>
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
+              as DateTime?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       medication: freezed == medication
           ? _value.medication
           : medication // ignore: cast_nullable_to_non_nullable
@@ -460,25 +460,25 @@ class _$PatientMedicationImpl implements _PatientMedication {
       {required this.id,
       required this.patientId,
       required this.medicationId,
-      required this.prescribedBy,
+      this.prescribedBy,
       required this.dosage,
-      required final List<MedicationSchedule> schedule,
-      required this.priority,
+      final List<MedicationSchedule> schedule = const [],
+      this.priority = 'medium',
       required this.startDate,
       this.endDate,
-      required this.isActive,
-      required this.status,
+      this.isActive = true,
+      this.status = 'active',
       this.reasonForStopping,
       this.stoppedBy,
       this.stoppedAt,
-      required this.adherenceScore,
-      required this.totalDoses,
-      required this.takenDoses,
-      required this.missedDoses,
+      this.adherenceScore = 0,
+      this.totalDoses = 0,
+      this.takenDoses = 0,
+      this.missedDoses = 0,
       this.lastTaken,
       this.notes,
-      required this.createdAt,
-      required this.updatedAt,
+      this.createdAt,
+      this.updatedAt,
       this.medication,
       this.prescribedByUser})
       : _schedule = schedule;
@@ -493,11 +493,12 @@ class _$PatientMedicationImpl implements _PatientMedication {
   @override
   final String medicationId;
   @override
-  final String prescribedBy;
+  final String? prescribedBy;
   @override
   final MedicationDosage dosage;
   final List<MedicationSchedule> _schedule;
   @override
+  @JsonKey()
   List<MedicationSchedule> get schedule {
     if (_schedule is EqualUnmodifiableListView) return _schedule;
     // ignore: implicit_dynamic_type
@@ -505,14 +506,17 @@ class _$PatientMedicationImpl implements _PatientMedication {
   }
 
   @override
+  @JsonKey()
   final String priority;
   @override
   final DateTime startDate;
   @override
   final DateTime? endDate;
   @override
+  @JsonKey()
   final bool isActive;
   @override
+  @JsonKey()
   final String status;
   @override
   final String? reasonForStopping;
@@ -521,21 +525,25 @@ class _$PatientMedicationImpl implements _PatientMedication {
   @override
   final DateTime? stoppedAt;
   @override
+  @JsonKey()
   final int adherenceScore;
   @override
+  @JsonKey()
   final int totalDoses;
   @override
+  @JsonKey()
   final int takenDoses;
   @override
+  @JsonKey()
   final int missedDoses;
   @override
   final DateTime? lastTaken;
   @override
   final String? notes;
   @override
-  final DateTime createdAt;
+  final DateTime? createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 // Populated fields
   @override
   final Medication? medication;
@@ -648,25 +656,25 @@ abstract class _PatientMedication implements PatientMedication {
       {required final String id,
       required final String patientId,
       required final String medicationId,
-      required final String prescribedBy,
+      final String? prescribedBy,
       required final MedicationDosage dosage,
-      required final List<MedicationSchedule> schedule,
-      required final String priority,
+      final List<MedicationSchedule> schedule,
+      final String priority,
       required final DateTime startDate,
       final DateTime? endDate,
-      required final bool isActive,
-      required final String status,
+      final bool isActive,
+      final String status,
       final String? reasonForStopping,
       final String? stoppedBy,
       final DateTime? stoppedAt,
-      required final int adherenceScore,
-      required final int totalDoses,
-      required final int takenDoses,
-      required final int missedDoses,
+      final int adherenceScore,
+      final int totalDoses,
+      final int takenDoses,
+      final int missedDoses,
       final DateTime? lastTaken,
       final String? notes,
-      required final DateTime createdAt,
-      required final DateTime updatedAt,
+      final DateTime? createdAt,
+      final DateTime? updatedAt,
       final Medication? medication,
       final User? prescribedByUser}) = _$PatientMedicationImpl;
 
@@ -680,7 +688,7 @@ abstract class _PatientMedication implements PatientMedication {
   @override
   String get medicationId;
   @override
-  String get prescribedBy;
+  String? get prescribedBy;
   @override
   MedicationDosage get dosage;
   @override
@@ -714,9 +722,9 @@ abstract class _PatientMedication implements PatientMedication {
   @override
   String? get notes;
   @override
-  DateTime get createdAt;
+  DateTime? get createdAt;
   @override
-  DateTime get updatedAt; // Populated fields
+  DateTime? get updatedAt; // Populated fields
   @override
   Medication? get medication;
   @override

@@ -1,0 +1,14 @@
+{
+  "dart.flutterHotReloadOnSave": "always",
+  "dart.hotReloadOnSave": "always",
+  "dart.flutterHotRestartOnSave": "never",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.flutterOutline": true,
+  "dart.flutterCreateAndroidLanguage": "kotlin",
+  "dart.flutterCreateIOSLanguage": "swift"
+}

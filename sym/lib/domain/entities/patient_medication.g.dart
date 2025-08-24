@@ -12,33 +12,39 @@ _$PatientMedicationImpl _$$PatientMedicationImplFromJson(
       id: json['id'] as String,
       patientId: json['patientId'] as String,
       medicationId: json['medicationId'] as String,
-      prescribedBy: json['prescribedBy'] as String,
+      prescribedBy: json['prescribedBy'] as String?,
       dosage: MedicationDosage.fromJson(json['dosage'] as Map<String, dynamic>),
-      schedule: (json['schedule'] as List<dynamic>)
-          .map((e) => MedicationSchedule.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      priority: json['priority'] as String,
+      schedule: (json['schedule'] as List<dynamic>?)
+              ?.map(
+                  (e) => MedicationSchedule.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      priority: json['priority'] as String? ?? 'medium',
       startDate: DateTime.parse(json['startDate'] as String),
       endDate: json['endDate'] == null
           ? null
           : DateTime.parse(json['endDate'] as String),
-      isActive: json['isActive'] as bool,
-      status: json['status'] as String,
+      isActive: json['isActive'] as bool? ?? true,
+      status: json['status'] as String? ?? 'active',
       reasonForStopping: json['reasonForStopping'] as String?,
       stoppedBy: json['stoppedBy'] as String?,
       stoppedAt: json['stoppedAt'] == null
           ? null
           : DateTime.parse(json['stoppedAt'] as String),
-      adherenceScore: (json['adherenceScore'] as num).toInt(),
-      totalDoses: (json['totalDoses'] as num).toInt(),
-      takenDoses: (json['takenDoses'] as num).toInt(),
-      missedDoses: (json['missedDoses'] as num).toInt(),
+      adherenceScore: (json['adherenceScore'] as num?)?.toInt() ?? 0,
+      totalDoses: (json['totalDoses'] as num?)?.toInt() ?? 0,
+      takenDoses: (json['takenDoses'] as num?)?.toInt() ?? 0,
+      missedDoses: (json['missedDoses'] as num?)?.toInt() ?? 0,
       lastTaken: json['lastTaken'] == null
           ? null
           : DateTime.parse(json['lastTaken'] as String),
       notes: json['notes'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
       medication: json['medication'] == null
           ? null
           : Medication.fromJson(json['medication'] as Map<String, dynamic>),
@@ -70,8 +76,8 @@ Map<String, dynamic> _$$PatientMedicationImplToJson(
       'missedDoses': instance.missedDoses,
       'lastTaken': instance.lastTaken?.toIso8601String(),
       'notes': instance.notes,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
       'medication': instance.medication,
       'prescribedByUser': instance.prescribedByUser,
     };
