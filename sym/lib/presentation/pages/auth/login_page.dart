@@ -43,6 +43,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authProvider);
     final size = MediaQuery.of(context).size;
 
+    // Navigate to home page after successful login
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.isAuthenticated && !next.isLoading) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+      }
+    });
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(

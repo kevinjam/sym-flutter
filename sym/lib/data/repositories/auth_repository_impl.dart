@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import '../../core/errors/result.dart';
 import '../../core/errors/failures.dart';
 import '../../core/constants/app_constants.dart';
@@ -150,6 +151,17 @@ class AuthRepositoryImpl implements AuthRepository {
         } catch (e) {
           print('🔐 [AUTH] Registration API call failed with error: $e');
           print('🔐 [AUTH] Error type: ${e.runtimeType}');
+          
+          // Log detailed error information for DioException
+          if (e is DioException) {
+            print('🔐 [AUTH] DioException details:');
+            print('🔐 [AUTH] Status code: ${e.response?.statusCode}');
+            print('🔐 [AUTH] Response data: ${e.response?.data}');
+            print('🔐 [AUTH] Response headers: ${e.response?.headers}');
+            print('🔐 [AUTH] Request data: ${e.requestOptions.data}');
+            print('🔐 [AUTH] Request path: ${e.requestOptions.path}');
+          }
+          
           print('🔐 [AUTH] Error stack trace: ${StackTrace.current}');
           
           // Check if it's a parsing error from Retrofit
@@ -210,6 +222,40 @@ class AuthRepositoryImpl implements AuthRepository {
         } else {
           // Handle error response
           String errorMessage = 'Failed to get current user';
+          if (response.data is Map<String, dynamic>) {
+            final errorData = response.data as Map<String, dynamic>;
+            errorMessage = errorData['error'] ?? errorMessage;
+          } else if (response.data is String) {
+            errorMessage = response.data as String;
+          }
+          throw Exception(errorMessage);
+        }
+      },
+      onError: (error) => Failure.authenticationError(error.toString()),
+    );
+  }
+
+  @override
+  Future<Result<User>> updateProfile(UpdateProfileRequest request) async {
+    return ResultUtils.tryCatch(
+      () async {
+        print('🔐 [AUTH] Starting profile update process');
+        print('🔐 [AUTH] Update request: ${request.toJson()}');
+        
+        final response = await _apiService.updateProfile(request);
+        
+        if (response.response.statusCode == 200) {
+          final userResponse = response.data;
+          final updatedUser = userResponse.user;
+          
+          // Save updated user to local storage
+          await _storageService.saveUser(updatedUser);
+          
+          print('🔐 [AUTH] Profile updated successfully');
+          return updatedUser;
+        } else {
+          // Handle error response
+          String errorMessage = 'Failed to update profile';
           if (response.data is Map<String, dynamic>) {
             final errorData = response.data as Map<String, dynamic>;
             errorMessage = errorData['error'] ?? errorMessage;

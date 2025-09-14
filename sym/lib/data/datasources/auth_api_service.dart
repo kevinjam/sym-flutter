@@ -25,6 +25,11 @@ abstract class AuthApiService {
   @GET('/api/auth/profile')
   Future<HttpResponse<UserResponse>> getCurrentUser();
 
+  @PUT('/api/auth/profile')
+  Future<HttpResponse<UserResponse>> updateProfile(
+    @Body() UpdateProfileRequest request,
+  );
+
   @POST('/api/auth/refresh')
   Future<HttpResponse<TokenResponse>> refreshToken(
     @Body() Map<String, String> refreshTokenRequest,

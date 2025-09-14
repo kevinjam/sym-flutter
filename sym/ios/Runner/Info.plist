@@ -57,6 +57,22 @@
 				<string>com.googleusercontent.apps.705925983244-li8tm7fophfbvjnsqqc546kqka3ue4k2</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>mailto</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mailto</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>tel</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tel</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

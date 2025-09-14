@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../doctors/find_doctor_page.dart';
 
 class ModernDashboardPage extends StatelessWidget {
   const ModernDashboardPage({super.key});
@@ -119,7 +120,7 @@ class ModernDashboardPage extends StatelessWidget {
         children: [
           _buildHealthStatusCard(),
           const SizedBox(height: 24),
-          _buildQuickActionsSection(),
+          _buildQuickActionsSection(context),
         ],
       ),
     );
@@ -298,7 +299,7 @@ class ModernDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -339,7 +340,13 @@ class ModernDashboardPage extends StatelessWidget {
                 title: 'Find Doctors',
                 icon: Icons.local_hospital,
                 color: AppColors.warning,
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const FindDoctorPage(),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),

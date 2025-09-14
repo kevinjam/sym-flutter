@@ -148,6 +148,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String firstName,
     required String lastName,
     required String role,
+    String? phoneNumber,
+    String? dateOfBirth,
+    String? gender,
+    String? specialization,
+    String? licenseNumber,
+    String? hospital,
   }) async {
     print('🔐 [AUTH_PROVIDER] Starting registration process for: $email');
     state = state.copyWith(isLoading: true, error: null);
@@ -158,6 +164,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       firstName: firstName,
       lastName: lastName,
       role: role,
+      phoneNumber: phoneNumber,
+      dateOfBirth: dateOfBirth,
+      gender: gender,
+      specialization: specialization,
+      licenseNumber: licenseNumber,
+      hospital: hospital,
     );
     
     print('🔐 [AUTH_PROVIDER] RegisterRequest created: $request');
@@ -186,6 +198,39 @@ class AuthNotifier extends StateNotifier<AuthState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> updateProfile({
+    required String firstName,
+    required String lastName,
+    String? phoneNumber,
+    String? fcmToken,
+  }) async {
+    print('🔐 [AUTH_PROVIDER] Starting profile update process');
+    state = state.copyWith(isLoading: true, error: null);
+    
+    final request = UpdateProfileRequest(
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      fcmToken: fcmToken,
+    );
+    
+    print('🔐 [AUTH_PROVIDER] UpdateProfileRequest created: $request');
+    
+    final result = await _authRepository.updateProfile(request);
+    
+    result.fold(
+      (failure) => state = state.copyWith(
+        isLoading: false,
+        error: failure.toString(),
+      ),
+      (updatedUser) => state = state.copyWith(
+        isLoading: false,
+        user: updatedUser,
+        error: null,
+      ),
     );
   }
 

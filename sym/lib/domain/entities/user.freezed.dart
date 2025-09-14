@@ -767,6 +767,19 @@ mixin _$RegisterRequest {
   String get lastName => throw _privateConstructorUsedError;
   String get role => throw _privateConstructorUsedError;
   String get provider => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get phoneNumber => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get dateOfBirth => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get gender =>
+      throw _privateConstructorUsedError; // Doctor-specific fields
+  @JsonKey(includeIfNull: false)
+  String? get specialization => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get licenseNumber => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get hospital => throw _privateConstructorUsedError;
 
   /// Serializes this RegisterRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -790,7 +803,13 @@ abstract class $RegisterRequestCopyWith<$Res> {
       String firstName,
       String lastName,
       String role,
-      String provider});
+      String provider,
+      @JsonKey(includeIfNull: false) String? phoneNumber,
+      @JsonKey(includeIfNull: false) String? dateOfBirth,
+      @JsonKey(includeIfNull: false) String? gender,
+      @JsonKey(includeIfNull: false) String? specialization,
+      @JsonKey(includeIfNull: false) String? licenseNumber,
+      @JsonKey(includeIfNull: false) String? hospital});
 }
 
 /// @nodoc
@@ -814,6 +833,12 @@ class _$RegisterRequestCopyWithImpl<$Res, $Val extends RegisterRequest>
     Object? lastName = null,
     Object? role = null,
     Object? provider = null,
+    Object? phoneNumber = freezed,
+    Object? dateOfBirth = freezed,
+    Object? gender = freezed,
+    Object? specialization = freezed,
+    Object? licenseNumber = freezed,
+    Object? hospital = freezed,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -840,6 +865,30 @@ class _$RegisterRequestCopyWithImpl<$Res, $Val extends RegisterRequest>
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateOfBirth: freezed == dateOfBirth
+          ? _value.dateOfBirth
+          : dateOfBirth // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      specialization: freezed == specialization
+          ? _value.specialization
+          : specialization // ignore: cast_nullable_to_non_nullable
+              as String?,
+      licenseNumber: freezed == licenseNumber
+          ? _value.licenseNumber
+          : licenseNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hospital: freezed == hospital
+          ? _value.hospital
+          : hospital // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -858,7 +907,13 @@ abstract class _$$RegisterRequestImplCopyWith<$Res>
       String firstName,
       String lastName,
       String role,
-      String provider});
+      String provider,
+      @JsonKey(includeIfNull: false) String? phoneNumber,
+      @JsonKey(includeIfNull: false) String? dateOfBirth,
+      @JsonKey(includeIfNull: false) String? gender,
+      @JsonKey(includeIfNull: false) String? specialization,
+      @JsonKey(includeIfNull: false) String? licenseNumber,
+      @JsonKey(includeIfNull: false) String? hospital});
 }
 
 /// @nodoc
@@ -880,6 +935,12 @@ class __$$RegisterRequestImplCopyWithImpl<$Res>
     Object? lastName = null,
     Object? role = null,
     Object? provider = null,
+    Object? phoneNumber = freezed,
+    Object? dateOfBirth = freezed,
+    Object? gender = freezed,
+    Object? specialization = freezed,
+    Object? licenseNumber = freezed,
+    Object? hospital = freezed,
   }) {
     return _then(_$RegisterRequestImpl(
       email: null == email
@@ -906,6 +967,30 @@ class __$$RegisterRequestImplCopyWithImpl<$Res>
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dateOfBirth: freezed == dateOfBirth
+          ? _value.dateOfBirth
+          : dateOfBirth // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String?,
+      specialization: freezed == specialization
+          ? _value.specialization
+          : specialization // ignore: cast_nullable_to_non_nullable
+              as String?,
+      licenseNumber: freezed == licenseNumber
+          ? _value.licenseNumber
+          : licenseNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hospital: freezed == hospital
+          ? _value.hospital
+          : hospital // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -919,7 +1004,13 @@ class _$RegisterRequestImpl implements _RegisterRequest {
       required this.firstName,
       required this.lastName,
       required this.role,
-      this.provider = 'local'});
+      this.provider = 'local',
+      @JsonKey(includeIfNull: false) this.phoneNumber,
+      @JsonKey(includeIfNull: false) this.dateOfBirth,
+      @JsonKey(includeIfNull: false) this.gender,
+      @JsonKey(includeIfNull: false) this.specialization,
+      @JsonKey(includeIfNull: false) this.licenseNumber,
+      @JsonKey(includeIfNull: false) this.hospital});
 
   factory _$RegisterRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$RegisterRequestImplFromJson(json);
@@ -937,10 +1028,29 @@ class _$RegisterRequestImpl implements _RegisterRequest {
   @override
   @JsonKey()
   final String provider;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? phoneNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? dateOfBirth;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? gender;
+// Doctor-specific fields
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? specialization;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? licenseNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? hospital;
 
   @override
   String toString() {
-    return 'RegisterRequest(email: $email, password: $password, firstName: $firstName, lastName: $lastName, role: $role, provider: $provider)';
+    return 'RegisterRequest(email: $email, password: $password, firstName: $firstName, lastName: $lastName, role: $role, provider: $provider, phoneNumber: $phoneNumber, dateOfBirth: $dateOfBirth, gender: $gender, specialization: $specialization, licenseNumber: $licenseNumber, hospital: $hospital)';
   }
 
   @override
@@ -957,13 +1067,36 @@ class _$RegisterRequestImpl implements _RegisterRequest {
                 other.lastName == lastName) &&
             (identical(other.role, role) || other.role == role) &&
             (identical(other.provider, provider) ||
-                other.provider == provider));
+                other.provider == provider) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.dateOfBirth, dateOfBirth) ||
+                other.dateOfBirth == dateOfBirth) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.specialization, specialization) ||
+                other.specialization == specialization) &&
+            (identical(other.licenseNumber, licenseNumber) ||
+                other.licenseNumber == licenseNumber) &&
+            (identical(other.hospital, hospital) ||
+                other.hospital == hospital));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, email, password, firstName, lastName, role, provider);
+      runtimeType,
+      email,
+      password,
+      firstName,
+      lastName,
+      role,
+      provider,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+      specialization,
+      licenseNumber,
+      hospital);
 
   /// Create a copy of RegisterRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -984,12 +1117,19 @@ class _$RegisterRequestImpl implements _RegisterRequest {
 
 abstract class _RegisterRequest implements RegisterRequest {
   const factory _RegisterRequest(
-      {required final String email,
-      required final String password,
-      required final String firstName,
-      required final String lastName,
-      required final String role,
-      final String provider}) = _$RegisterRequestImpl;
+          {required final String email,
+          required final String password,
+          required final String firstName,
+          required final String lastName,
+          required final String role,
+          final String provider,
+          @JsonKey(includeIfNull: false) final String? phoneNumber,
+          @JsonKey(includeIfNull: false) final String? dateOfBirth,
+          @JsonKey(includeIfNull: false) final String? gender,
+          @JsonKey(includeIfNull: false) final String? specialization,
+          @JsonKey(includeIfNull: false) final String? licenseNumber,
+          @JsonKey(includeIfNull: false) final String? hospital}) =
+      _$RegisterRequestImpl;
 
   factory _RegisterRequest.fromJson(Map<String, dynamic> json) =
       _$RegisterRequestImpl.fromJson;
@@ -1006,6 +1146,24 @@ abstract class _RegisterRequest implements RegisterRequest {
   String get role;
   @override
   String get provider;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get phoneNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get dateOfBirth;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get gender; // Doctor-specific fields
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get specialization;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get licenseNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get hospital;
 
   /// Create a copy of RegisterRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1013,4 +1171,232 @@ abstract class _RegisterRequest implements RegisterRequest {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RegisterRequestImplCopyWith<_$RegisterRequestImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+UpdateProfileRequest _$UpdateProfileRequestFromJson(Map<String, dynamic> json) {
+  return _UpdateProfileRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UpdateProfileRequest {
+  String get firstName => throw _privateConstructorUsedError;
+  String get lastName => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get phoneNumber => throw _privateConstructorUsedError;
+  @JsonKey(includeIfNull: false)
+  String? get fcmToken => throw _privateConstructorUsedError;
+
+  /// Serializes this UpdateProfileRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UpdateProfileRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UpdateProfileRequestCopyWith<UpdateProfileRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UpdateProfileRequestCopyWith<$Res> {
+  factory $UpdateProfileRequestCopyWith(UpdateProfileRequest value,
+          $Res Function(UpdateProfileRequest) then) =
+      _$UpdateProfileRequestCopyWithImpl<$Res, UpdateProfileRequest>;
+  @useResult
+  $Res call(
+      {String firstName,
+      String lastName,
+      @JsonKey(includeIfNull: false) String? phoneNumber,
+      @JsonKey(includeIfNull: false) String? fcmToken});
+}
+
+/// @nodoc
+class _$UpdateProfileRequestCopyWithImpl<$Res,
+        $Val extends UpdateProfileRequest>
+    implements $UpdateProfileRequestCopyWith<$Res> {
+  _$UpdateProfileRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UpdateProfileRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? phoneNumber = freezed,
+    Object? fcmToken = freezed,
+  }) {
+    return _then(_value.copyWith(
+      firstName: null == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastName: null == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UpdateProfileRequestImplCopyWith<$Res>
+    implements $UpdateProfileRequestCopyWith<$Res> {
+  factory _$$UpdateProfileRequestImplCopyWith(_$UpdateProfileRequestImpl value,
+          $Res Function(_$UpdateProfileRequestImpl) then) =
+      __$$UpdateProfileRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String firstName,
+      String lastName,
+      @JsonKey(includeIfNull: false) String? phoneNumber,
+      @JsonKey(includeIfNull: false) String? fcmToken});
+}
+
+/// @nodoc
+class __$$UpdateProfileRequestImplCopyWithImpl<$Res>
+    extends _$UpdateProfileRequestCopyWithImpl<$Res, _$UpdateProfileRequestImpl>
+    implements _$$UpdateProfileRequestImplCopyWith<$Res> {
+  __$$UpdateProfileRequestImplCopyWithImpl(_$UpdateProfileRequestImpl _value,
+      $Res Function(_$UpdateProfileRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UpdateProfileRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? phoneNumber = freezed,
+    Object? fcmToken = freezed,
+  }) {
+    return _then(_$UpdateProfileRequestImpl(
+      firstName: null == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String,
+      lastName: null == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String,
+      phoneNumber: freezed == phoneNumber
+          ? _value.phoneNumber
+          : phoneNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UpdateProfileRequestImpl implements _UpdateProfileRequest {
+  const _$UpdateProfileRequestImpl(
+      {required this.firstName,
+      required this.lastName,
+      @JsonKey(includeIfNull: false) this.phoneNumber,
+      @JsonKey(includeIfNull: false) this.fcmToken});
+
+  factory _$UpdateProfileRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UpdateProfileRequestImplFromJson(json);
+
+  @override
+  final String firstName;
+  @override
+  final String lastName;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? phoneNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  final String? fcmToken;
+
+  @override
+  String toString() {
+    return 'UpdateProfileRequest(firstName: $firstName, lastName: $lastName, phoneNumber: $phoneNumber, fcmToken: $fcmToken)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateProfileRequestImpl &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.phoneNumber, phoneNumber) ||
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, firstName, lastName, phoneNumber, fcmToken);
+
+  /// Create a copy of UpdateProfileRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateProfileRequestImplCopyWith<_$UpdateProfileRequestImpl>
+      get copyWith =>
+          __$$UpdateProfileRequestImplCopyWithImpl<_$UpdateProfileRequestImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UpdateProfileRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UpdateProfileRequest implements UpdateProfileRequest {
+  const factory _UpdateProfileRequest(
+          {required final String firstName,
+          required final String lastName,
+          @JsonKey(includeIfNull: false) final String? phoneNumber,
+          @JsonKey(includeIfNull: false) final String? fcmToken}) =
+      _$UpdateProfileRequestImpl;
+
+  factory _UpdateProfileRequest.fromJson(Map<String, dynamic> json) =
+      _$UpdateProfileRequestImpl.fromJson;
+
+  @override
+  String get firstName;
+  @override
+  String get lastName;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get phoneNumber;
+  @override
+  @JsonKey(includeIfNull: false)
+  String? get fcmToken;
+
+  /// Create a copy of UpdateProfileRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateProfileRequestImplCopyWith<_$UpdateProfileRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

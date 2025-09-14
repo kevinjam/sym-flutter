@@ -10,9 +10,10 @@ import '../../providers/medication_provider.dart';
 import '../../providers/patient_symptom_provider.dart';
 import '../medications/medications_page.dart';
 import '../symptoms/symptoms_page.dart';
-import '../doctors/doctors_page.dart';
+import '../doctors/find_doctor_page.dart';
 import '../profile/profile_page.dart';
 import '../notifications/notifications_page.dart';
+import '../health/health_report_page.dart';
 import '../../providers/auth_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -522,7 +523,12 @@ class DashboardTab extends ConsumerWidget {
               Icons.local_hospital,
               AppColors.warning,
               () {
-                // Navigate to doctors
+                // Navigate to Find Doctor page
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FindDoctorPage(),
+                  ),
+                );
               },
             ),
             _buildQuickActionCard(
@@ -530,7 +536,12 @@ class DashboardTab extends ConsumerWidget {
               Icons.analytics,
               AppColors.info,
               () {
-                // Show coming soon message
+                // Navigate to Health Report page
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const HealthReportPage(),
+                  ),
+                );
               },
             ),
           ],

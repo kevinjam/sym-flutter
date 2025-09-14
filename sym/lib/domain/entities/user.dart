@@ -53,7 +53,26 @@ class RegisterRequest with _$RegisterRequest {
     required String lastName,
     required String role,
     @Default('local') String provider,
+    @JsonKey(includeIfNull: false) String? phoneNumber,
+    @JsonKey(includeIfNull: false) String? dateOfBirth,
+    @JsonKey(includeIfNull: false) String? gender,
+    // Doctor-specific fields
+    @JsonKey(includeIfNull: false) String? specialization,
+    @JsonKey(includeIfNull: false) String? licenseNumber,
+    @JsonKey(includeIfNull: false) String? hospital,
   }) = _RegisterRequest;
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) => _$RegisterRequestFromJson(json);
+}
+
+@freezed
+class UpdateProfileRequest with _$UpdateProfileRequest {
+  const factory UpdateProfileRequest({
+    required String firstName,
+    required String lastName,
+    @JsonKey(includeIfNull: false) String? phoneNumber,
+    @JsonKey(includeIfNull: false) String? fcmToken,
+  }) = _UpdateProfileRequest;
+
+  factory UpdateProfileRequest.fromJson(Map<String, dynamic> json) => _$UpdateProfileRequestFromJson(json);
 }

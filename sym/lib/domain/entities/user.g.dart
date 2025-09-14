@@ -78,6 +78,12 @@ _$RegisterRequestImpl _$$RegisterRequestImplFromJson(
       lastName: json['lastName'] as String,
       role: json['role'] as String,
       provider: json['provider'] as String? ?? 'local',
+      phoneNumber: json['phoneNumber'] as String?,
+      dateOfBirth: json['dateOfBirth'] as String?,
+      gender: json['gender'] as String?,
+      specialization: json['specialization'] as String?,
+      licenseNumber: json['licenseNumber'] as String?,
+      hospital: json['hospital'] as String?,
     );
 
 Map<String, dynamic> _$$RegisterRequestImplToJson(
@@ -89,4 +95,28 @@ Map<String, dynamic> _$$RegisterRequestImplToJson(
       'lastName': instance.lastName,
       'role': instance.role,
       'provider': instance.provider,
+      if (instance.phoneNumber case final value?) 'phoneNumber': value,
+      if (instance.dateOfBirth case final value?) 'dateOfBirth': value,
+      if (instance.gender case final value?) 'gender': value,
+      if (instance.specialization case final value?) 'specialization': value,
+      if (instance.licenseNumber case final value?) 'licenseNumber': value,
+      if (instance.hospital case final value?) 'hospital': value,
+    };
+
+_$UpdateProfileRequestImpl _$$UpdateProfileRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UpdateProfileRequestImpl(
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      phoneNumber: json['phoneNumber'] as String?,
+      fcmToken: json['fcmToken'] as String?,
+    );
+
+Map<String, dynamic> _$$UpdateProfileRequestImplToJson(
+        _$UpdateProfileRequestImpl instance) =>
+    <String, dynamic>{
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      if (instance.phoneNumber case final value?) 'phoneNumber': value,
+      if (instance.fcmToken case final value?) 'fcmToken': value,
     };
