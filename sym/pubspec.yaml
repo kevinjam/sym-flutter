@@ -2,7 +2,7 @@ name: sym
 description: "Patient-facing medication and symptom tracking app"
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.8.1
