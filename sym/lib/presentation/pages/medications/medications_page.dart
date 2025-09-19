@@ -6,6 +6,8 @@ import '../../../core/widgets/custom_card.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../providers/medication_provider.dart';
 import 'add_medication_modal.dart';
+import 'prescription_scanner_page.dart';
+import 'scanned_prescriptions_page.dart';
 import 'package:intl/intl.dart';
 
 class MedicationsPage extends ConsumerWidget {
@@ -32,6 +34,26 @@ class MedicationsPage extends ConsumerWidget {
           ),
         ),
         actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1A1A1A) : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.qr_code_scanner_outlined,
+                color: isDark ? Colors.white70 : AppColors.textSecondary,
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ScannedPrescriptionsPage(),
+                  ),
+                );
+              },
+            ),
+          ),
           Container(
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
@@ -89,45 +111,93 @@ class MedicationsPage extends ConsumerWidget {
                 ? _buildEmptyState()
                 : _buildMedicationsList(medicationState.medications, ref),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              AppColors.medicationPrimary,
-              AppColors.medicationPrimary.withOpacity(0.8),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.medicationPrimary.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          heroTag: "medications_fab",
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const AddMedicationModal(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // Scanner FAB
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue,
+                  Colors.blue.withOpacity(0.8),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            );
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          icon: const Icon(Icons.add_rounded, color: Colors.white),
-          label: const Text(
-            'Add Medication',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: FloatingActionButton.extended(
+              heroTag: "scanner_fab",
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PrescriptionScannerPage(),
+                  ),
+                );
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white),
+              label: const Text(
+                'Scan Prescription',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
-        ),
+          // Add Medication FAB
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.medicationPrimary,
+                  AppColors.medicationPrimary.withOpacity(0.8),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.medicationPrimary.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: FloatingActionButton.extended(
+              heroTag: "medications_fab",
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AddMedicationModal(),
+                  ),
+                );
+              },
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              icon: const Icon(Icons.add_rounded, color: Colors.white),
+              label: const Text(
+                'Add Medication',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -194,41 +264,88 @@ class MedicationsPage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.medicationPrimary,
-                        AppColors.medicationPrimary.withOpacity(0.8),
-                      ],
-                    ),
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const AddMedicationModal(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.blue,
+                              Colors.blue.withOpacity(0.8),
+                            ],
+                          ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const PrescriptionScannerPage(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white),
+                          label: const Text(
+                            'Scan Prescription',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-                    label: const Text(
-                      'Add Your First Medication',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.medicationPrimary,
+                              AppColors.medicationPrimary.withOpacity(0.8),
+                            ],
+                          ),
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AddMedicationModal(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+                          label: const Text(
+                            'Add Manually',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
